@@ -1,4 +1,4 @@
-# Personal Data README 
+# Personal Data 
 
 Welcome fellow software engineering enthusiasts! In this guide, we'll dive into the exciting world of managing personal data responsibly and securely. As budding developers, it's crucial for us to understand how to handle Personally Identifiable Information (PII), non-PII, and personal data in our applications. So, let's embark on this enlightening journey together! 
 
