@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Implement log filters obfuscating some fields
 """
+import csv
 import logging
 import re
 from typing import List
+
+
+PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 
 class RedactingFormatter(logging.Formatter):
@@ -43,3 +47,25 @@ def filter_datum(fields: List[str], redaction: str,
         obf_msg = re.sub(r'{}=.*?{}'.format(f, separator),
                          f'{f}={redaction}{separator}', obf_msg)
     return obf_msg
+
+
+def get_logger() -> logging.Logger:
+    """Return a logging.Logger object"""
+
+    # Create logger
+    logger = logging.getLogger('user_data')
+
+    # Set level
+    logger.setLevel(logging.INFO)
+
+    # Create stream handler
+    stream_handler = logging.StreamHandler()
+
+    # Set formatter as RedactingFormatter
+    stream_handler.setFormatter(RedactingFormatter())
+
+    # Add the handler to logger
+    logger.addHandler(stream_handler)
+
+    # Return logger
+    return logger
