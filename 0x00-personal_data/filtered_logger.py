@@ -86,5 +86,36 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
             auth_plugin='mysql_native_password'
             )
 
-    # Return connect
+    # Return connection
     return connection
+
+def main() -> None:
+    """Obtain a database connection using get_db,
+    retrieve all rows in the users table,
+    and display each row under a filtered format
+    """
+
+    # Obtain connection
+    db = get_db()
+
+    # Retrieve rows
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users;')
+
+    # Get logger
+    logger = get_logger()
+
+    # Log data
+    for row in cursor:
+        data = ''
+        for i in range(len(row)):
+            data += f'{cursor.column_names[i]}={row[i]};'
+        logger.info(data)
+
+    # Close resources
+    cursor.close()
+    db.close()
+
+
+if __name__ == '__main__':
+    main()
