@@ -1,9 +1,8 @@
 -- setup mysql server
 -- configure permissions
 CREATE DATABASE IF NOT EXISTS my_db;
-DROP USER IF EXISTS 'ych'@'localhost';
-CREATE USER IF NOT EXISTS 'ych'@'localhost' IDENTIFIED BY 'mlmlml';
-GRANT ALL PRIVILEGES ON my_db.* TO 'ych'@'localhost';
+CREATE USER IF NOT EXISTS 'test'@'localhost' IDENTIFIED BY 'testing';
+GRANT ALL PRIVILEGES ON my_db.* TO 'test'@'localhost';
 
 USE my_db;
 

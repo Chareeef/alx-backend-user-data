@@ -58,18 +58,20 @@ def get_logger() -> logging.Logger:
 
     # Set level
     logger.setLevel(logging.INFO)
+    logger.propagate = False
 
     # Create stream handler
     stream_handler = logging.StreamHandler()
 
     # Set formatter as RedactingFormatter
-    stream_handler.setFormatter(RedactingFormatter())
+    stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
 
     # Add the handler to logger
     logger.addHandler(stream_handler)
 
     # Return logger
     return logger
+
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """ Return a MySQLConnection object based on credentials in os.environ
@@ -78,11 +80,11 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     # Connect with credentials
     connection = mysql.connector.connect(
             host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
+            database=os.environ.get('PERSONAL_DATA_DB_NAME'),
             user=os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
             password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''),
-            database=os.environ.get('PERSONAL_DATA_DB_NAME')
+            auth_plugin='mysql_native_password'
             )
 
     # Return connect
     return connection
-
