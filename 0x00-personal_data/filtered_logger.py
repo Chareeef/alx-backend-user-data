@@ -3,9 +3,10 @@
 """
 import csv
 import logging
+import mysql.connector
+import os
 import re
 from typing import List
-
 
 PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
@@ -69,3 +70,19 @@ def get_logger() -> logging.Logger:
 
     # Return logger
     return logger
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """ Return a MySQLConnection object based on credentials in os.environ
+    """
+
+    # Connect with credentials
+    connection = mysql.connector.connect(
+            host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
+            user=os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
+            password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''),
+            database=os.environ.get('PERSONAL_DATA_DB_NAME')
+            )
+
+    # Return connect
+    return connection
+
