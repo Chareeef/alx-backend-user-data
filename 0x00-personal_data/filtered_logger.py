@@ -89,6 +89,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     # Return connection
     return connection
 
+
 def main() -> None:
     """Obtain a database connection using get_db,
     retrieve all rows in the users table,
