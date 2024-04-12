@@ -78,13 +78,15 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     """
 
     # Connect with credentials
-    connection = mysql.connector.connect(
-            host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
-            database=os.environ.get('PERSONAL_DATA_DB_NAME'),
-            user=os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
-            password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''),
-            auth_plugin='mysql_native_password'
-            )
+    try:
+        connection = mysql.connector.connect(
+                host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
+                database=os.environ.get('PERSONAL_DATA_DB_NAME'),
+                user=os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
+                password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
+                )
+    except BaseException:
+        return None
 
     # Return connection
     return connection
