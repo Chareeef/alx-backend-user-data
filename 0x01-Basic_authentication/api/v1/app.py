@@ -15,10 +15,17 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 # auth variable
 auth = None
 
-if getenv('AUTH_TYPE') == 'auth':
+auth_type = getenv('AUTH_TYPE')
+
+if auth_type == 'auth':
     # Assign an Auth instance
     from api.v1.auth.auth import Auth
     auth = Auth()
+elif auth_type == 'basic_auth':
+    # Assign a BasicAuth instance
+    from api.v1.auth.basic_auth import BasicAuth
+    auth = BasicAuth()
+
 
 @app.before_request
 def before_request():
@@ -29,14 +36,15 @@ def before_request():
         return
 
     elif not auth.require_auth(request.path,
-                         ['/api/v1/status/', 
-                          '/api/v1/unauthorized/', 
-                          '/api/v1/forbidden/']):
+                               ['/api/v1/status/',
+                                '/api/v1/unauthorized/',
+                                '/api/v1/forbidden/']):
         return
     elif not auth.authorization_header(request):
         abort(401)
     elif not auth.current_user(request):
         abort(403)
+
 
 @app.errorhandler(404)
 def not_found(error) -> str:
