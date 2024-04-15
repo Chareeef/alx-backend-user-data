@@ -35,5 +35,5 @@ class Auth:
             return None
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """Get the current user"""
+        """To be overloaded"""
         return None
