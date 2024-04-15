@@ -26,7 +26,13 @@ class Auth:
         return path not in excluded_paths
 
     def authorization_header(self, request=None) -> str:
-        return None
+        """Return the value of the header request 'Authorization' if it exists
+        or None otherwise
+        """
+        if request:
+            return request.headers.get('Authorization', None)
+        else:
+            return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         return None
