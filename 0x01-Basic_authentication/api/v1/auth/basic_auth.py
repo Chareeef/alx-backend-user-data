@@ -64,7 +64,7 @@ class BasicAuth(Auth):
         # Search for email
         try:
             user = User.search({'email': user_email})[0]
-        except IndexError:
+        except BaseException:
             return None
 
         # Check password
