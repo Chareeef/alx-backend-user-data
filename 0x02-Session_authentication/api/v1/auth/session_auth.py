@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """The SessionAuth class"""
 from api.v1.auth.auth import Auth
+from models.user import User
+from typing import TypeVar
 import uuid
 
 
@@ -41,3 +43,18 @@ class SessionAuth(Auth):
 
         # Return the User ID
         return user_id
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Retrieve the User instance for a request"""
+
+        if not request:
+            return None
+
+        # Get the Session ID based on the request's session cookie
+        session_id = self.session_cookie(request)
+
+        # Get the User ID based on the Session ID
+        user_id = self.user_id_for_session_id(session_id)
+
+        # Return the user if exists
+        return User.get(user_id)
