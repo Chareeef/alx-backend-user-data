@@ -27,3 +27,17 @@ class SessionAuth(Auth):
 
         # Return the Session ID
         return session_id
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        """Return a User ID based on a Session ID
+        """
+
+        # Verify `session_id`'s type
+        if not isinstance(session_id, str):
+            return None
+
+        # Try to get `user_id` if exists, None otherwise
+        user_id = self.user_id_by_session_id.get(session_id)
+
+        # Return the User ID
+        return user_id
