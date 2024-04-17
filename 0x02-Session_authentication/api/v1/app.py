@@ -4,7 +4,7 @@ Route module for the API
 """
 from os import getenv
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
+from flask import abort, Flask, jsonify, request
 from flask_cors import (CORS, cross_origin)
 
 
@@ -27,8 +27,8 @@ elif auth_type == 'basic_auth':
     auth = BasicAuth()
 elif auth_type == 'session_auth':
     # Assign a SessionAuth instance
-    from api.v1.auth.session_auth import session_auth
-    auth = session_auth()
+    from api.v1.auth.session_auth import SessionAuth
+    auth = SessionAuth()
 
 
 @app.before_request
@@ -44,10 +44,15 @@ def before_request():
                                 '/api/v1/unauthorized/',
                                 '/api/v1/forbidden/']):
         return
+
     elif not auth.authorization_header(request):
         abort(401)
+
     elif not auth.current_user(request):
         abort(403)
+
+    else:
+        request.current_user = auth.current_user(request)
 
 
 @app.errorhandler(404)
