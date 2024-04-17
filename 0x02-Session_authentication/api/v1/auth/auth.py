@@ -2,6 +2,7 @@
 """The Auth class"""
 from flask import request
 from typing import List, TypeVar
+import os
 
 
 class Auth:
@@ -47,5 +48,17 @@ class Auth:
             return None
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """To be overloaded"""
+        """To be implemented by BasicAuth or SessionAuth subclasses"""
         return None
+
+    def session_cookie(self, request=None):
+        """Returns a cookie value from a request"""
+
+        if not request:
+            return None
+
+        # The name of the cookie is defined by the env variable SESSION_NAME
+        cookie_name = os.getenv('SESSION_NAME')
+
+        # Return the cookie value if it's been set
+        return request.cookies.get(cookie_name)
