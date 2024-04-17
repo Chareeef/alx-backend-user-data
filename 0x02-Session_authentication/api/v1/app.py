@@ -42,10 +42,12 @@ def before_request():
     elif not auth.require_auth(request.path,
                                ['/api/v1/status/',
                                 '/api/v1/unauthorized/',
-                                '/api/v1/forbidden/']):
+                                '/api/v1/forbidden/',
+                                '/api/v1/auth_session/login/']):
         return
 
-    elif not auth.authorization_header(request):
+    elif not auth.authorization_header(request) and \
+            not auth.session_cookie(request):
         abort(401)
 
     elif not auth.current_user(request):
