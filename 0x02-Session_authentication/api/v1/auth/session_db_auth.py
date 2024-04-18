@@ -3,6 +3,7 @@
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from datetime import datetime, timedelta
 from models.user_session import UserSession
+import uuid
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -14,8 +15,12 @@ class SessionDBAuth(SessionExpAuth):
         """Create and return a Session ID for a `user_id`
         """
 
-        # Call parent method to generate a sessions
-        session_id = super().create_session(user_id)
+        # Verify `user_id`'s type
+        if not isinstance(user_id, str):
+            return None
+
+        # Generate a Session ID
+        session_id = str(uuid.uuid4())
 
         # Store new instance of UserSession
         user_session = UserSession(session_id=session_id, user_id=user_id)
