@@ -33,6 +33,15 @@ elif auth_type == 'session_exp_auth':
     # Assign a SessionExpAuth instance
     from api.v1.auth.session_exp_auth import SessionExpAuth
     auth = SessionExpAuth()
+elif auth_type == 'session_db_auth':
+
+    # Load UserSession DB
+    from models.user_session import UserSession
+    UserSession.load_from_file()
+
+    # Assign a SessionDBAuth instance
+    from api.v1.auth.session_db_auth import SessionDBAuth
+    auth = SessionDBAuth()
 
 
 @app.before_request
