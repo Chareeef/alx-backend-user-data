@@ -10,7 +10,7 @@ from os import getenv
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """ POST /api/v1/session_auth/login/
-    Login through Session Authentication
+    Log In through Session Authentication
 
     Return the JSON representation of the logged user
     """
@@ -48,3 +48,20 @@ def login():
         response.set_cookie(getenv('SESSION_NAME'), session_id)
 
         return response
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def logout():
+    """ DELETE /api/v1/session_auth/logout/
+    Log Out from a session
+
+    Return an empty JSON dict if the session has been deleted successfully
+    """
+    from api.v1.app import auth
+
+    # Destroy the session
+    if auth.destroy_session(request):
+        return jsonify({}), 200
+    else:
+        abort(404)
