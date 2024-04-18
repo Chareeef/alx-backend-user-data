@@ -29,6 +29,10 @@ elif auth_type == 'session_auth':
     # Assign a SessionAuth instance
     from api.v1.auth.session_auth import SessionAuth
     auth = SessionAuth()
+elif auth_type == 'session_exp_auth':
+    # Assign a SessionExpAuth instance
+    from api.v1.auth.session_exp_auth import SessionExpAuth
+    auth = SessionExpAuth()
 
 
 @app.before_request
