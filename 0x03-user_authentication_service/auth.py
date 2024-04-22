@@ -1,6 +1,40 @@
 #!/usr/bin/env python3
 """Passwords Encryption/Decryption"""
 import bcrypt
+from db import DB
+from sqlalchemy.orm.exc import NoResultFound
+from user import User
+
+
+class Auth:
+    """Auth class to interact with the authentication database.
+    """
+
+    def __init__(self):
+        self._db = DB()
+
+    def register_user(self, email: str, password: str) -> User:
+        """Register a new user in the database
+        """
+
+        # If the email already exists
+        try:
+            if self._db.find_user_by(email=email):
+                raise ValueError(f'User {email} already exists.')
+        except NoResultFound:
+            pass
+
+        # Create the user
+        user = User()
+        user.email = email
+        user.hashed_password = _hash_password(password)
+
+        # Save it
+        self._db._session.add(user)
+        self._db._session.commit()
+
+        # Return it
+        return user
 
 
 def _hash_password(password: str) -> bytes:
