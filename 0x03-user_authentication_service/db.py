@@ -2,6 +2,8 @@
 """DB module
 """
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
@@ -44,4 +46,28 @@ class DB:
         self._session.commit()
 
         # Return user
+        return user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Find and return the first user corresponding to the passed kwargs
+        """
+
+        # Check kwargs keys are valid
+        valid_keys = ['id', 'email', 'hashed_password',
+                      'session_id', 'reset_token']
+
+        for key in kwargs.keys():
+
+            # Raise if wrong key
+            if key not in valid_keys:
+                raise InvalidRequestError
+
+        # Query for the user
+        user = self._session.query(User).filter_by(**kwargs).first()
+
+        # Raise NoResultFound if not found
+        if not user:
+            raise NoResultFound
+
+        # Return the user
         return user
