@@ -28,3 +28,8 @@ class User(Base):
     hashed_password = Column(String(250), nullable=False)
     session_id = Column(String(250))
     reset_token = Column(String(250))
+
+    def __repr__(self):
+        """Representation of the user instance
+        """
+        return f'User ({self.id}): {self.email} - {self.hashed_password}'
