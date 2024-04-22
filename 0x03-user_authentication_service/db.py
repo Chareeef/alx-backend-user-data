@@ -6,7 +6,7 @@ from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-
+from typing import Dict
 from user import Base, User
 
 
@@ -48,11 +48,11 @@ class DB:
         # Return user
         return user
 
-    def find_user_by(self, **kwargs) -> User:
-        """Find and return the first user corresponding to the passed kwargs
+    @staticmethod
+    def check_keys(kwargs: Dict) -> None:
+        """Check kwargs keys are valid User attributes
         """
 
-        # Check kwargs keys are valid
         valid_keys = ['id', 'email', 'hashed_password',
                       'session_id', 'reset_token']
 
@@ -62,8 +62,15 @@ class DB:
             if key not in valid_keys:
                 raise InvalidRequestError
 
+    def find_user_by(self, **kwargs) -> User:
+        """Find and return the first user corresponding to the passed kwargs
+        """
+
         # Query for the user
         user = self._session.query(User).filter_by(**kwargs).first()
+
+        # Check kwargs keys
+        self.check_keys(kwargs)
 
         # Raise NoResultFound if not found
         if not user:
@@ -71,3 +78,23 @@ class DB:
 
         # Return the user
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update the user’s attributes as passed in the `kwargs`
+        """
+
+        # Find the user
+        user = self.find_user_by(id=user_id)
+
+        # Check kwargs keys
+        try:
+            self.check_keys(kwargs)
+        except InvalidRequestError:
+            raise ValueError
+
+        # Update user
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        # Commit changes
+        self._session.commit()
