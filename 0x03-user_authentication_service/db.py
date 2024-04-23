@@ -66,11 +66,11 @@ class DB:
         """Find and return the first user corresponding to the passed kwargs
         """
 
-        # Query for the user
-        user = self._session.query(User).filter_by(**kwargs).first()
-
         # Check kwargs keys
         self.check_keys(kwargs)
+
+        # Query for the user
+        user = self._session.query(User).filter_by(**kwargs).first()
 
         # Raise NoResultFound if not found
         if not user:
@@ -83,14 +83,14 @@ class DB:
         """Update the user’s attributes as passed in the `kwargs`
         """
 
-        # Find the user
-        user = self.find_user_by(id=user_id)
-
         # Check kwargs keys
         try:
             self.check_keys(kwargs)
         except InvalidRequestError:
             raise ValueError
+
+        # Find the user
+        user = self.find_user_by(id=user_id)
 
         # Update user
         for key, value in kwargs.items():

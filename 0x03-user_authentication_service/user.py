@@ -2,7 +2,7 @@
 """User module
 """
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 
 # Create our Base class
 Base = declarative_base()
