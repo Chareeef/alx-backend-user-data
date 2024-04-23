@@ -64,6 +64,25 @@ def login():
     return response
 
 
+@app.route('/profile/')
+def profile():
+    """Return the user's email based on `session_id`
+    """
+
+    # Retrieve the session ID from the cookie
+    session_id = request.cookies.get('session_id')
+
+    # Search for the user
+    user = AUTH.get_user_from_session_id(session_id)
+
+    # Send 'Forbidden' if not found
+    if not user:
+        abort(403)
+
+    # Return email payload
+    return jsonify({'email': user.email})
+
+
 @app.route('/sessions/', methods=['DELETE'])
 def logout():
     """Destroy the session for the user
