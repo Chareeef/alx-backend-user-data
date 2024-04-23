@@ -26,13 +26,7 @@ class Auth:
             pass
 
         # Create the user
-        user = User()
-        user.email = email
-        user.hashed_password = _hash_password(password)
-
-        # Save it
-        self._db._session.add(user)
-        self._db._session.commit()
+        user = self._db.add_user(email, _hash_password(password))
 
         # Return it
         return user
@@ -52,6 +46,23 @@ class Auth:
             return True
         else:
             return False
+
+    def create_session(self, email: str) -> str:
+        """Create a session ID for the user with email and return this ID
+        """
+
+        # Find the user
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+
+        # Create and assign session ID
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+
+        # Return the session ID
+        return session_id
 
 
 def _hash_password(password: str) -> bytes:

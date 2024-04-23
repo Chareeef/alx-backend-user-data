@@ -53,12 +53,11 @@ class DB:
         """Check kwargs keys are valid User attributes
         """
 
-        valid_keys = ['id', 'email', 'hashed_password',
-                      'session_id', 'reset_token']
+        valid_keys = User.__table__.columns.keys()
 
         for key in kwargs.keys():
 
-            # Raise if wrong key
+            # Raise InvalidRequestError if wrong key
             if key not in valid_keys:
                 raise InvalidRequestError
 
