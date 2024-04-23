@@ -2,7 +2,8 @@
 """A Flask application
 """
 from auth import Auth
-from flask import abort, Flask, jsonify, make_response, request
+from flask import (abort, Flask, jsonify, make_response,
+                   redirect, request, url_for)
 
 # Create the app
 app = Flask(__name__)
@@ -61,6 +62,28 @@ def login():
     response.set_cookie('session_id', session_id)
 
     return response
+
+
+@app.route('/sessions/', methods=['DELETE'])
+def logout():
+    """Destroy the session for the user
+    """
+
+    # Retrieve the session ID from the cookie
+    session_id = request.cookies.get('session_id')
+
+    # Search for the user
+    user = AUTH.get_user_from_session_id(session_id)
+
+    # Send 'Forbidden' if not found
+    if not user:
+        abort(403)
+
+    # Destroy session
+    AUTH.destroy_session(user.id)
+
+    # Redirect to root
+    return redirect(url_for('index'), code=303)
 
 
 if __name__ == '__main__':
