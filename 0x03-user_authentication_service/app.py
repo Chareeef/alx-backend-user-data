@@ -20,6 +20,7 @@ def index():
     """
     return jsonify({'message': 'Bienvenue'})
 
+
 @app.route('/users/', methods=['POST'])
 def users():
     """End-point to register a user
