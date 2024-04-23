@@ -87,6 +87,25 @@ class Auth:
         except NoResultFound:
             return None
 
+    def get_reset_password_token(self, email: str) -> str:
+        """Generate reset password token for the user
+        """
+
+        # Find the user
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            raise ValueError
+
+        # Generate token
+        reset_token = _generate_uuid()
+
+        # Assign it
+        self._db.update_user(user.id, reset_token=reset_token)
+
+        # Return it
+        return reset_token
+
 
 def _hash_password(password: str) -> bytes:
     """Hash `password` and returns a salted, hashed password,
