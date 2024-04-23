@@ -84,7 +84,7 @@ def profile():
 
 
 @app.route('/sessions/', methods=['DELETE'])
-def logout():
+def logout() -> str:
     """Destroy the session for the user
     """
 
@@ -102,7 +102,7 @@ def logout():
     AUTH.destroy_session(user.id)
 
     # Redirect to root
-    return redirect(url_for('index'), code=303)
+    return redirect('/')
 
 
 @app.route('/reset_token/', methods=['POST'])
