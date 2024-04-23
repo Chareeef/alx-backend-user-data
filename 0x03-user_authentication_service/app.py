@@ -80,7 +80,7 @@ def profile():
         abort(403)
 
     # Return email payload
-    return jsonify({'email': user.email})
+    return make_response(jsonify({'email': user.email}))
 
 
 @app.route('/sessions/', methods=['DELETE'])
@@ -103,6 +103,25 @@ def logout():
 
     # Redirect to root
     return redirect(url_for('index'), code=303)
+
+
+@app.route('/reset_token/', methods=['POST'])
+def get_reset_password_token():
+    """Generate reset password token for a user
+    """
+
+    # Retrieve email
+    email = request.form.get('email')
+
+    try:
+        # Generate the reset password token for the user if exists
+        reset_token = AUTH.get_reset_password_token(email)
+    except ValueError:
+        abort(403)
+
+    # Return email and reset_token payload
+    return make_response(jsonify({'email': email,
+                                  'reset_token': reset_token}))
 
 
 if __name__ == '__main__':
