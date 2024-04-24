@@ -142,6 +142,10 @@ def update_password():
     password = request.form.get('password')
     reset_token = request.form.get('reset_token')
 
+    # Send 'Forbidden' if no reset_token was sent
+    if not reset_token:
+        abort(403)
+
     try:
         # Update the user's password
         AUTH.update_password(reset_token, password)
