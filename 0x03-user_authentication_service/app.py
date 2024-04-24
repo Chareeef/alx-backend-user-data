@@ -142,11 +142,14 @@ def update_password():
     password = request.form.get('password')
     reset_token = request.form.get('reset_token')
 
-    # Send 'Forbidden' if no reset_token was sent
-    if not reset_token:
+    # Send 'Forbidden' if email or reset_token are missing
+    if not email or not reset_token:
         abort(403)
 
     try:
+        # Check that email and reset_token correspond to the same user
+        AUTH.valid_reset_token(email, reset_token)
+
         # Update the user's password
         AUTH.update_password(reset_token, password)
     except ValueError:
