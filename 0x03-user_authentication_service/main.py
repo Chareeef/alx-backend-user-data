@@ -120,7 +120,7 @@ def update_password(email: str, reset_token: str, new_password: str) -> None:
     response = requests.put('http://localhost:5000/reset_password',
                             data={'email': email,
                                   'reset_token': reset_token,
-                                  'password': new_password})
+                                  'new_password': new_password})
 
     # Define the assertions
     assert response.status_code == requests.codes.ok
