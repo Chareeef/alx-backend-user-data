@@ -19,7 +19,7 @@ AUTH = Auth()
 def index():
     """Root route
     """
-    return jsonify({'message': 'Bienvenue'})
+    return make_response(jsonify({'message': 'Bienvenue'}))
 
 
 @app.route('/users/', methods=['POST'])
@@ -38,7 +38,7 @@ def users():
         return jsonify({'message': 'email already registered'}), 400
 
     # The user was successefully registered
-    return jsonify({'email': email, 'message': 'user created'})
+    return make_response(jsonify({'email': email, 'message': 'user created'}))
 
 
 @app.route('/sessions/', methods=['POST'])
@@ -64,25 +64,6 @@ def login():
     return response
 
 
-@app.route('/profile/')
-def profile():
-    """Return the user's email based on `session_id`
-    """
-
-    # Retrieve the session ID from the cookie
-    session_id = request.cookies.get('session_id')
-
-    # Search for the user
-    user = AUTH.get_user_from_session_id(session_id)
-
-    # Send 'Forbidden' if not found
-    if not user:
-        abort(403)
-
-    # Return email payload
-    return make_response(jsonify({'email': user.email}))
-
-
 @app.route('/sessions/', methods=['DELETE'])
 def logout() -> str:
     """Destroy the session for the user
@@ -90,6 +71,10 @@ def logout() -> str:
 
     # Retrieve the session ID from the cookie
     session_id = request.cookies.get('session_id')
+
+    # Send 'Forbidden' if no session ID was sent
+    if not session_id:
+        abort(403)
 
     # Search for the user
     user = AUTH.get_user_from_session_id(session_id)
@@ -102,10 +87,33 @@ def logout() -> str:
     AUTH.destroy_session(user.id)
 
     # Redirect to root
-    return redirect('/')
+    return redirect(url_for('index'))
 
 
-@app.route('/reset_token/', methods=['POST'])
+@app.route('/profile/')
+def profile():
+    """Return the user's email based on `session_id`
+    """
+
+    # Retrieve the session ID from the cookie
+    session_id = request.cookies.get('session_id')
+
+    # Send 'Forbidden' if no session ID was sent
+    if not session_id:
+        abort(403)
+
+    # Search for the user
+    user = AUTH.get_user_from_session_id(session_id)
+
+    # Send 'Forbidden' if no user was found
+    if not user:
+        abort(403)
+
+    # Return email payload
+    return make_response(jsonify({'email': user.email}))
+
+
+@app.route('/reset_password/', methods=['POST'])
 def get_reset_password_token():
     """Generate reset password token for a user
     """
@@ -136,7 +144,7 @@ def update_password():
 
     try:
         # Update the user's password
-        AUTH.update_password_token(reset_token, password)
+        AUTH.update_password(reset_token, password)
     except ValueError:
         abort(403)
 
